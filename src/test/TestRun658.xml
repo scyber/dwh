@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<suite name="Test Run 658" verbose="1">
+
+    <test name="Test refresh Balance Target Hive schema">
+        <parameter name="TestCaseID" value="13345"/>
+        <classes>
+            <class name="ru.russianpost.qa.tests.Test_C13345_CheckBalancesReport">
+                <methods >
+                    <include name="buildReportBalancesTables"/>
+
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Test run Oozie Job">
+        <parameter name="TestCaseID" value="13346"/>
+        <classes>
+            <class name="ru.russianpost.qa.tests.Test_C13346_BuildTestTables">
+                <methods >
+                    <include name="builTestCasesTables"/>
+
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Test check RPO RPO in The Object">
+        <parameter name="TestCaseID" value="13351"/>
+        <classes>
+            <class name="ru.russianpost.qa.tests.Test_C13351CheckRPOInObject">
+                <methods >
+                    <include name="getRpoInTheObject"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Test check RPO RPO in The Way">
+        <parameter name="TestCaseID" value="13352"/>
+        <classes>
+            <class name="ru.russianpost.qa.tests.Test_C13352CheckRPOinTheWay">
+                <methods >
+                    <include name="getRpoInTheWay"/>
+
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="Test check RPO out of Report ">
+        <parameter name="TestCaseID" value="13355"/>
+        <classes>
+            <class name="ru.russianpost.qa.tests.Test_C13355_TestRPOoutOfReport">
+                <methods >
+                    <include name="getRpoOutOfReport"/>
+
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>

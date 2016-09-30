@@ -1,0 +1,43 @@
+<assembly>
+    <id>bin</id>
+    <!--  START SNIPPET: formats  -->
+    <formats>
+        <format>tar.gz</format>
+        <format>tar.bz2</format>
+        <format>zip</format>
+    </formats>
+    <!--  END SNIPPET: formats  -->
+    <!--  START SNIPPET: fileSets  -->
+    <fileSets>
+        <fileSet>
+            <includes>
+                <include>src/resources</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/sql</directory>
+            <outputDirectory>sql</outputDirectory>
+            <includes>
+                <include>*.sql</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+        <fileSet>
+            <directory>src/test</directory>
+            <outputDirectory>test</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>das-autotests-*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <!--  END SNIPPET: fileSets  -->
+</assembly>

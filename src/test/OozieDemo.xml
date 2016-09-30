@@ -1,0 +1,24 @@
+<suite name="Demo Test Oozie Jobs " verbose="1">
+    <!-- Удаление тестовой схемы -->
+    <test name="Demo Test Oozie Job">
+        <parameter name="TestRunID" value=""/>
+        <parameter name="TestCaseID" value=""/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+
+        <classes>
+            <class name="OozieDemo">
+                <methods>
+                    <!--
+                    <include name="changeTestRunStatus"/>
+                    -->
+                    <include name="RunOozieOstatki"/>
+
+
+
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

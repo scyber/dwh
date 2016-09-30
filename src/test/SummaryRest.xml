@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<suite name="Summary Rest Suite" verbose="1">    
+   <!-- Удаление тестовой схемы -->
+     <test name="DropTestTables">
+        <parameter name="dropRPOInfo" value="drop table test_merge.rpo_info   "/>
+        <parameter name="dropMatreshkaMerge" value="drop table test_merge.matreshka_merge "/>
+        
+        <parameter name="TestRunID" value="367"/>
+        <parameter name="TestCaseID" value="10041"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>   
+        <classes>
+            <class name="SummaryRest">
+            <methods>  
+            <include name="dropTestMatreshkaMergeTable"/>
+            <include name="dropTestRPOInfoTable"/>
+            </methods>
+            </class>
+        </classes>
+    </test>
+      
+    <!-- Создание тестовой схемы  -->
+    
+    <!-- Тест созадающий тестовые уменьшенные таблицы, в схемах test_merge.  test_merge.matreshka_merge, test_merge.rpo_info  для работы с тестовыми данными в уменьшенном варианте. -->
+<!-- Данные тесты позволяют сазаданием параметров уменьшать тестовые среды для более бстрого тестирования отчётных данных -->
+<test name="CreateTestTables">
+
+<parameter name="createMatreshkaMerge" value="CREATE TABLE test_merge.matreshka_merge
+as select * 
+from merge.matreshka_merge 
+WHERE date &gt;= '2015-12-24' and date &lt;='2015-12-31' "/>
+<parameter name="createTestRpoInfo" value="create table test_merge.rpo_info 
+STORED AS ORC as 
+SELECT rpo_info.* FROM merge.rpo_info 
+Left JOIN 
+(SELECT DISTINCT bar_code FROM test_merge.matreshka_merge) T 
+ON (T.bar_code = rpo_info.bar_code) 
+WHERE T.bar_code IS NOT NULL "/>
+<parameter name="TestRunID" value="367"/>
+<parameter name="TestCaseID" value="10041"/>
+<parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+<parameter name="TestRailPassword" value="dc1455021533"/>
+<parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/> 
+
+    <classes>
+    <class name="SummaryRest">        
+    <methods>   
+<!-- Создаем урезанную таблицу для тестирования данных metreshka_merge в тестовой схеме test_merge -->
+<include name="createTestMatreshkaMergeTable"/>
+<include name="createTestRPOInfoTable"/>
+    </methods>
+    </class>
+    </classes>
+    </test>
+    
+    
+    
+    <!-- Тестирование РПО которые не должны попадать в таблицу т.к. имеют статус выход из сети -->   
+    <test name="CheckRPOwithExitFromNETstatus">
+<parameter name="getRpoOutOfNet" value="select distinct bar_code from test_merge.matreshka_merge mm2
+WHERE
+(mm2.oper_type in (2, 21, 16, 18, 3000))
+OR (mm2.oper_type = '8' AND mm2.oper_attr='8')
+OR (mm2.oper_type ='10')
+OR (mm2.oper_type = '8' AND mm2.oper_attr='8')
+OR (mm2.oper_type ='10' AND mm2.country_oper='643')
+limit 10 "/>
+<parameter name="selectRpoInReportTable" value="select bar_code from test_tracking.balance_fact where bar_code =  "/>
+<parameter name="TestRunID" value="367"/>
+<parameter name="TestCaseID" value="10041"/>
+<parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+<parameter name="TestRailPassword" value="dc1455021533"/>
+<parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/> 
+
+    <classes>
+    <class name="SummaryRest">        
+    <methods>
+        <include name="checkRpoOutOfNetList"/>
+   
+    </methods>
+    </class>
+    </classes>
+    </test>
+ <!-- Проверка РПО попадающих в отчёт - РПО также должны нахоходиться в таблице rpo_info если их там нет. в отчёт они не попадают -->   
+    <test name="CheckRPOwithReport">
+
+<parameter name="getRpoInReport" 
+value="select distinct 
+mm.bar_code 
+from test_merge.matreshka_merge mm
+LEFT JOIN dicts.fps_structure dd ON dd.post_object_index = mm.index_oper
+LEFT JOIN dicts.fps_structure dd2 ON dd2.post_object_index = mm.index_next  
+WHERE
+mm.oper_date_time is null
+AND
+dd.post_object_index = mm.index_oper AND mm.index_oper is not null
+AND
+mm.oper_date_time is null OR NOT ( mm.index_oper = mm.index_next AND mm.index_next is null )
+AND NOT (mm.oper_type IN (2, 21, 16, 18, 3000))
+AND NOT ((mm.oper_type = '8' AND mm.oper_attr='8')
+AND NOT (mm.oper_type ='10')
+AND NOT (mm.oper_type = '8' AND mm.oper_attr='8')
+AND NOT (mm.oper_type ='10' AND mm.country_oper='643'))
+limit 10 " />
+<parameter name="selectRpoInReportTable" value="select bar_code from test_tracking.balance_fact where bar_code =  "/>
+<parameter name="selectRpoFromInfo" value="select bar_code from test_merge.rpo_info where bar_code = "/>
+<parameter name="TestRunID" value="367"/>
+<parameter name="TestCaseID" value="10041"/>
+<parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+<parameter name="TestRailPassword" value="dc1455021533"/>
+<parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/> 
+
+    <classes>
+    <class name="SummaryRest">        
+    <methods>
+        <include name="checkRpoInNetList"/>
+        
+    </methods>
+    </class>
+    </classes>
+    </test>
+    
+     <!-- Тестирование ЦВПП данные отчета -->   
+    <test name="CheckCVPPReportData">
+<!--    
+        <parameter name="getRpoOutOfNet" value="select distinct bar_code from test_merge.matreshka_merge mm2
+WHERE
+(mm2.oper_type in (2, 21, 16, 18, 3000))
+OR (mm2.oper_type = '8' AND mm2.oper_attr='8')
+OR (mm2.oper_type ='10')
+OR (mm2.oper_type = '8' AND mm2.oper_attr='8')
+OR (mm2.oper_type ='10' AND mm2.country_oper='643')
+limit 10 "/>
+  <parameter name="selectRpoInReportTable" value="select bar_code from test_tracking.balance_fact where bar_code =  "/>
+-->  
+    <classes>
+    <class name="SummaryRest">    
+    <methods>
+        <include name="connectToVertica"/>
+   
+    </methods>
+    </class>
+    </classes>
+    </test>
+
+     
+</suite>

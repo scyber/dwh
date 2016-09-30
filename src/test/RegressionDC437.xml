@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<suite name="Regression Test against DC-437 issue " verbose="1">    
+   <!-- Удаление тестовой схемы -->
+     <test name="CompareDatesBetweenHiveAndCacandra">
+        <parameter name="TestRunID" value=""/>
+        <parameter name="TestCaseID" value=""/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="casandraAddr" value="hw-test-dc2"/>
+        <parameter name="conKeyspace" value="matreshka"/>
+        <parameter name="rtTracesTable" value="matreshka.rt_traces"/>
+        <parameter name="HIVE_URL" value="jdbc:hive2://hw-test-dc1:10010/tracking"/>
+        <parameter name="USER" value="hdfs"/>
+        <parameter name="PASSWORD" value=""/>
+        <parameter name="SelectFromHive" value="select id_of_operand1, oper_time_zone, oper_date_time from gpiskunov.operations where id_of_operand1 = "/>
+        <parameter name="SelectFromCasandra" value="select barcode, oper_timestamp, oper_time_zone from matreshka.rt_traces limit 5 "/>
+        
+        <parameter name="TestRunID" value="367"/>
+        <parameter name="TestCaseID" value="10074"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        
+        
+        <classes>
+            <class name="RegressionDC437">
+            <methods>
+                
+                <include name="compareDataBetweenHiveAndCasandra"/>
+                <!-- <include name="getDataTimefromHive"/> -->
+                <!-- <include name="compareDataBetweenHiveAndCasandra"/> -->
+            <!--    
+            <include name="changeTestRunStatus"/>
+            -->
+            <!--
+            <include name="GetTestCaseSubject"/>
+            <include name="ChangeTestCaseStatus"/>
+            -->
+            
+            </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

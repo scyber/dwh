@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<suite name="Balance Regression" verbose="1">
+
+    <test name="Test for debug new concept">
+    <classes>
+        <class name="BalanceRegression">
+            <methods >
+                <include name="debugNewAcrhitecture"/>
+
+            </methods>
+        </class>
+    </classes>
+    </test>
+
+    <test name="Refresh Targe Schema Balances Report">
+        <parameter name="DropSchemaQuery" value="drop schema test_auto_balances cascade "/>
+        <parameter name="CreateSchemaQuery" value="create schema test_auto_balances "/>
+
+        <parameter name="HiveUrl" value="jdbc:hive2://10.2.62.178:10010/"/>
+        <parameter name="HiveTestSchema" value="test_auto_balances"/>
+        <parameter name="HiveUserName" value="hdfs"/>
+        <parameter name="HiveUserNamePassword" value=""/>
+
+        <parameter name="TestRunID" value="658"/>
+        <parameter name="TestCaseID" value="13346"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="TestRailFailStatus" value="5"/>
+        <parameter name="TestRailSuccesStatus" value="1"/>
+
+        <classes>
+            <class name="BalanceRegression">
+                <methods>
+                    <!-- Вызов методов теста -->
+                    <!-- Test 1-->
+                    <!-- Запуск OOZIE скриптов постороения остатков -->
+                    <include name="refreshTestBalancesSchema"/>
+
+                </methods>
+            </class>
+        </classes>
+
+
+    </test>
+
+
+    <test name="Test Oozie Job Run ">
+
+
+        <parameter name="oozieUrl" value="http://10.2.62.178:11000/oozie"/>
+
+        <!-- TestParams2 -->
+        <!--<parameter name="oozieJobHDFSPath" value="hdfs://rpdc/user/hue/oozie/workspaces/hue-oozie-1471617772.82"/>-->
+
+
+        <!-- New Test Balances workflow with SubWorkFlow params -->
+        <!--<parameter name="oozieJobHDFSPath" value="hdfs://rpdc/user/hue/oozie/workspaces/hue-oozie-1471864349.89"/>-->
+
+        <!-- TestBalance Job in oozie-->
+        <parameter name="oozieJobHDFSPath" value="hdfs://rpdc/user/hue/oozie/workspaces/hue-oozie-1461586836.13"/>
+
+        <!-- TestParams -->
+        <!--<parameter name="oozieJobHDFSPath" value="hdfs://rpdc/user/hue/oozie/workspaces/hue-oozie-1471415274.03"/>-->
+
+        <!--
+        <parameter name="jobIdBalanceTest" value="0000026-160426142927939-oozie-oozi-W"/>
+        -->
+
+        <parameter name="jobTracker" value="10.2.62.178:8050"/>
+        <parameter name="queueName" value="test"/>
+        <parameter name="nameNode" value="hdfs://rpdc"/>
+        <parameter name="user.name" value="hdfs"/>
+        <parameter name="oozie.use.system.libpath" value="true"/>
+        <parameter name="security_enabled" value="false"/>
+        <parameter name="security.passwords.encryption.enabled" value="false"/>
+
+        <!--<parameter name="jobIdOstatki" value="0000068-160803101453381-oozie-oozi-W"/>-->
+
+        <!-- Add running scripts parameters now here -->
+        <!--<parameter name="oozie.script.params.12" value="12"/>-->
+        <parameter name="targetBalancesDB" value="test_auto_balances"/>
+        <parameter name="dictsDB" value="test_auto_dicts"/>
+        <parameter name="sourceMergeDB" value="test_auto_merge"/>
+        <parameter name="date" value="2016-01-01"/>
+        <parameter name="date_p1" value="2015-12-31"/>
+        <parameter name="start_date" value="2015-12-01"/>
+        <parameter name="date_m1" value="2015-12-29"/>
+        <parameter name="date_m2" value="2015-12-28"/>
+        <parameter name="date_m3" value="2015-12-27"/>
+        <parameter name="date_m4" value="2015-12-26"/>
+        <parameter name="date_m5" value="2015-12-25"/>
+        <parameter name="date_m6" value="2015-12-24"/>
+
+
+        <parameter name="TestRunID" value="658"/>
+        <parameter name="TestCaseID" value="13345"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="TestRailFailStatus" value="5"/>
+        <parameter name="TestRailSuccesStatus" value="1"/>
+
+        <classes>
+            <class name="BalanceRegression">
+                <methods>
+                    <!-- Запуск OOZIE скриптов постороения остатков -->
+                    <include name="runBalanceTestOozieJob"/>
+
+                </methods>
+            </class>
+        </classes>
+
+    </test>
+
+    <!-- Проверка РПО в Обьекте после отработки Oozie Job -->
+
+    <test name="Check RPO in The Object results">
+        <parameter name="TestRunID" value="658"/>
+        <parameter name="TestCaseID" value="13351"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="TestRailFailStatus" value="5"/>
+        <parameter name="TestRailSuccesStatus" value="1"/>
+
+        <parameter name="HiveUrl" value="jdbc:hive2://10.2.62.178:10010/"/>
+        <parameter name="HiveTestSchema" value="test_auto_balances"/>
+        <parameter name="HiveUserName" value="hdfs"/>
+        <parameter name="HiveUserNamePassword" value=""/>
+
+        <parameter name="selectRPOinTheObjectFirst" value="select count (distinct bar_code) from test_auto_balances.balance_fact where bar_code =  "/>
+        <parameter name="selectRPOinTheObjectLast" value=" and rpo_state = 2 "/>
+        <parameter name="rpoInTheObjectList" value="RR943098545CZ, VA003360952RU, RX534700495DE, RW388444305FR, RW268256305FR"/>
+
+
+        <classes>
+            <class name="BalanceRegression">
+                <methods>
+                    <include name="checkRPOInTheObject"/>
+                </methods>
+
+            </class>
+        </classes>
+    </test>
+
+    <!-- Проверка РПО в Обьекте после отработки Oozie Job -->
+
+    <test name="Check RPO in The Way results">
+        <parameter name="TestRunID" value="658"/>
+        <parameter name="TestCaseID" value="13352"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="TestRailFailStatus" value="5"/>
+        <parameter name="TestRailSuccesStatus" value="1"/>
+
+        <parameter name="HiveUrl" value="jdbc:hive2://10.2.62.178:10010/"/>
+        <parameter name="HiveTestSchema" value="test_auto_balances"/>
+        <parameter name="HiveUserName" value="hdfs"/>
+        <parameter name="HiveUserNamePassword" value=""/>
+
+        <parameter name="selectRPOinTheWayFirst" value="select count (distinct bar_code) from test_auto_balances.balance_fact where bar_code =  "/>
+        <parameter name="selectRPOinTheWayLast" value=" and rpo_state = 1 "/>
+        <parameter name="rpoInTheWayList" value="RT874864703DE, RS336844735NL, RR030960165VN, RR006230642SD, RQ170126283UZ"/>
+
+
+        <classes>
+            <class name="BalanceRegression">
+                <methods>
+                    <include name="checkRPOonTheWay"/>
+                </methods>
+
+            </class>
+        </classes>
+    </test>
+
+    <test name="Check RPO out of Report results">
+        <parameter name="TestRunID" value="658"/>
+        <parameter name="TestCaseID" value="13355"/>
+        <parameter name="TestRailUser" value="trapiuser.datacloud@russianpost.ru"/>
+        <parameter name="TestRailPassword" value="dc1455021533"/>
+        <parameter name="TestRailURL" value="https://testrail.tools.russianpost.ru"/>
+        <parameter name="TestRailFailStatus" value="5"/>
+        <parameter name="TestRailSuccesStatus" value="1"/>
+
+        <parameter name="HiveUrl" value="jdbc:hive2://10.2.62.178:10010/"/>
+        <parameter name="HiveTestSchema" value="test_auto_balances"/>
+        <parameter name="HiveUserName" value="hdfs"/>
+        <parameter name="HiveUserNamePassword" value=""/>
+
+        <parameter name="selectRPOoutOfReport" value="select count (distinct bar_code) from test_auto_balances.balance_fact where bar_code =  "/>
+        <!-- <parameter name="selectRPOoutOfReport" value=" and rpo_state = 0 "/> -->
+        <parameter name="rpoOutOfReportList" value="10100063011085, 10100087612596, 10100091524991, 10100089381346, 10100089384033"/>
+
+
+        <classes>
+            <class name="BalanceRegression">
+                <methods>
+                    <include name="checkRpoOutOfReport"/>
+                </methods>
+
+            </class>
+        </classes>
+    </test>
+
+
+
+
+
+
+</suite>
