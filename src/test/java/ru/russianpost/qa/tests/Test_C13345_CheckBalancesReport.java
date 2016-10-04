@@ -1,6 +1,7 @@
 package ru.russianpost.qa.tests;
 
 import org.apache.oozie.client.OozieClientException;
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 import ru.russianpost.qa.actions.DataManagement;
@@ -24,7 +25,7 @@ public class Test_C13345_CheckBalancesReport {
 
         try {
             //Run Step 1
-            Test_C13345_CheckBalancesReport.buildReportBalancesTables(context);
+            //Test_C13345_CheckBalancesReport.buildReportBalancesTables(context);
             //Run Step 2
             Test_C13345_CheckBalancesReport.builTestCasesTables(context);
             //Run Step 3
@@ -33,12 +34,16 @@ public class Test_C13345_CheckBalancesReport {
             Test_C13345_CheckBalancesReport.getRpoInTheWay(context);
             //Run Step 5
             Test_C13345_CheckBalancesReport.getRpoOutOfReport(context);
+
+            String results = "Test susccessfully passed";
+            TestRail.setTestRailResults(testCaseID, TestRail.setSuccessStatusId(), TestRail.setSuccessResults());
         } catch (Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
             String results = ex.getLocalizedMessage();
             TestRail.setTestRailResults(testCaseID, TestRail.setFailStatusId(), results );
+            Assert.fail(ex.getLocalizedMessage());
         }
-        String results = "Test susccessfully passed";
-        TestRail.setTestRailResults(testCaseID, TestRail.setSuccessStatusId(), TestRail.setSuccessResults());
+
     }
 
     @Step("Построение отчёта через запуск Oozie Job")
@@ -47,21 +52,7 @@ public class Test_C13345_CheckBalancesReport {
         String testCaseID = testParameters.get("TestCaseID").toString();
         //System.out.println("Run testCase " + testCaseID + " " + this.getClass().getName());
         String runOozieJobHDFSPath = "oozieJobBuildReportHDFSPath";
-        try {
-            Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath);
-        } catch (InterruptedException e) {
-            String results = e.getLocalizedMessage().toString();
-            TestRail.setTestRailResults(testCaseID, TestRail.setFailStatusId(), results);
-            //ToDo Thow Exception
-            e.printStackTrace();
-        } catch (OozieClientException e) {
-            String results = e.getLocalizedMessage().toString();
-            TestRail.setTestRailResults(testCaseID, TestRail.setFailStatusId(), results);
-            //ToDo thow exception
-            e.printStackTrace();
-
-        }
-        TestRail.setTestRailResults(testCaseID, TestRail.setSuccessStatusId(), TestRail.setSuccessResults());
+        Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath);
     }
 
     @Step("Построение результирующих таблиц скриптами тестирования через запуск Oozie Job")
@@ -72,14 +63,7 @@ public class Test_C13345_CheckBalancesReport {
         String testCaseID = testParameters.get("TestCaseID").toString();
         //System.out.println("Run testCase " + testCaseID + " " + this.getClass().getName());
         String runOozieJobHDFSPath = "oozieJobBuildCheckTablesHDFSPath";
-        try {
-            Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (OozieClientException e) {
-            e.printStackTrace();
-        }
+        Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath);
 
         //TestRail.setTestRailResults(testCaseID, TestRail.setSuccessStatusId(), TestRail.setSuccessResults() );
     }

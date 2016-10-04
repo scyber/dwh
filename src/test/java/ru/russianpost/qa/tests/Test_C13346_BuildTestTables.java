@@ -28,9 +28,6 @@ public class Test_C13346_BuildTestTables {
             String runOozieJobHDFSPath = "oozieJobBuildCheckTablesHDFSPath";
             try {
             Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath );
-            do {
-                Thread.sleep(10000);
-            }while(Oozie.runOozieJob(testCaseID, runOozieJobHDFSPath)== "RUNNING");
 
             } catch (InterruptedException e) {
 
